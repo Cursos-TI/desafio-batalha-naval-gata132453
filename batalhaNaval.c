@@ -1,40 +1,93 @@
 #include <stdio.h>
+#include <stdbool.h>
 
-// Desafio Batalha Naval - MateCheck
-// Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
-// Siga os comentários para implementar cada parte do desafio.
+#define SIZE 10 // Tamanho do tabuleiro 10x10
+int tabuleiro[SIZE][SIZE] = {{0}}; // Inicializa o tabuleiro com água (0)
+
+// Função para exibir o tabuleiro
+void exibirTabuleiro() {
+    printf("\nTabuleiro Atual:\n");
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (tabuleiro[i][j] == 0) {
+                printf(" ~ "); // Água
+            } else if (tabuleiro[i][j] == 3) {
+                printf(" # "); // Navio
+            } else if (tabuleiro[i][j] == 1) {
+                printf(" ~ "); // Água atacada
+            } else if (tabuleiro[i][j] == 2) {
+                printf(" X "); // Navio atingido
+            }
+        }
+        printf("\n");
+    }
+}
+
+// Função para atacar
+bool atacar(int linha, int coluna) {
+    if (linha < 0 || linha >= SIZE || coluna < 0 || coluna >= SIZE) {
+        printf("Coordenadas fora do tabuleiro. Tente novamente.\n");
+        return false;
+    }
+
+    if (tabuleiro[linha][coluna] == 3) {
+        tabuleiro[linha][coluna] = 2; // Navio atingido
+        printf("Ataque bem-sucedido! Você atingiu um navio!\n");
+        return true;
+    } else if (tabuleiro[linha][coluna] == 0) {
+        tabuleiro[linha][coluna] = 1; // Água atacada
+        printf("Água atacada! Tente novamente.\n");
+        return false;
+    }
+    return false;
+}
+
+// Função para verificar se todos os navios foram afundados
+bool verificarVitoria() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (tabuleiro[i][j] == 3) { // Se algum navio não foi atingido
+                return false;
+            }
+        }
+    }
+    return true; // Todos os navios foram afundados
+}
 
 int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+    int linha, coluna;
+    bool vitoria = false;
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+    // Inicializando os navios no tabuleiro
+    tabuleiro[2][2] = 3; // Navio 1 na posição (2,2)
+    tabuleiro[4][4] = 3; // Navio 2 na posição (4,4)
+    tabuleiro[5][1] = 3; // Navio 3 na posição (5,1)
+    tabuleiro[7][8] = 3; // Navio 4 na posição (7,8)
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+    // Exibir o tabuleiro inicial
+    exibirTabuleiro();
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
+    // Loop do jogo
+    while (!vitoria) {
+        printf("\nDigite as coordenadas de ataque (linha e coluna): ");
+        scanf("%d %d", &linha, &coluna);
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
+        // Realizar o ataque
+        if (atacar(linha, coluna)) {
+            printf("Você acertou!\n");
+        } else {
+            printf("Você errou! Tente novamente.\n");
+        }
+
+        // Exibir o tabuleiro após cada ataque
+        exibirTabuleiro();
+        
+        // Verificar a condição de vitória
+        vitoria = verificarVitoria();
+    }
+
+    // Final do jogo
+    printf("\nParabéns! Você venceu o jogo, todos os navios foram afundados.\n");
 
     return 0;
 }
